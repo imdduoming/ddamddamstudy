@@ -46,9 +46,10 @@
                 let posts = response;
                 let count = 0;
                 for (let i = 0; i < posts.length; i++) {
+
                     let post = posts[i];
 
-
+                    let id=post['id'];
                     let content = post['content'];
 
                     let temp_html = `<div class="story-list__item">
@@ -60,7 +61,10 @@
                                                             </svg>
                                                         </div>
                                                         <div>사용자</div>
-
+                                                        <div style="float: right">
+                                                            <button type="button" onclick="open_modal(id)">수정</button>
+                                                            <button type="button" onclick="delete_post(${id})">삭제</button>
+                                                        </div>
                                                     </div>
                                                     <div class="sl__item__img">
                                                         <img src="images/home3.jpg" alt="">
@@ -87,6 +91,32 @@
 
 
         })
+    }
+
+    function delete_post(id) {
+        $.ajax({
+            type: "DELETE",
+            url: `/gongstagram/post/${id}`,
+            success: function (response) {
+                window.location.reload();
+            }
+        });
+    }
+    function open_modal(){
+        $('#exampleModal').show();
+    }
+    function update_post(id) {
+
+        let update_content = $('#modal-content').val();
+        $.ajax({
+            type: "PUT",
+            url: `/gongstagram/post/${id}`,
+            data: {content:update_content},
+            success: function (response) {
+                alert("수정 완료!");
+                window.location.reload();
+            }
+        });
     }
 
 
@@ -171,7 +201,38 @@
         <button id="cancel" onclick="closePopup()">취소</button>
     </div>
 </div>
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="form" id="form" role="form" method="post">
 
+                    <div class="mb-3">
+                        <label for="modal-content">내용</label>
+                        <textarea class="form-control" rows="5" name="content" id="modal-content"
+                                  placeholder="내용을 입력해 주세요"></textarea>
+                    </div>
+<!--                    <div class="mb-3">-->
+<!--                        <label for="tags">Tag</label>-->
+<!--                        <input type="text" class="form-control" id="tags" data-role="tagsinput" placeholder="TAGS" >-->
+<!--                    </div>-->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-secondary" id="modal-save" onclick="update_post()"
+                       value="Save changes"></button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
