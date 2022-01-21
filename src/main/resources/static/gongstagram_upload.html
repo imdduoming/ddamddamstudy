@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gongstagram</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="css/gongstagram.css">
+    <link rel="stylesheet" href="css/gongstagram_upload.css">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+
+</head>
+<script>
+    // function imageChoose(obj) {
+    //     let f = obj.files[0];
+    //
+    //     if (!f.type.match("image.*")) {
+    //         alert("이미지를 등록해야 합니다.");
+    //         return;
+    //     }
+    //
+    //     let reader = new FileReader();
+    //     reader.onload = (e) => {
+    //         $("#imageUploadPreview").attr("src", e.target.result);
+    //     }
+    //     reader.readAsDataURL(f); // 이 코드 실행시 reader.onload 실행됨.
+    // }
+    function upload_post(){
+        let info = {
+            content : document.getElementById("content").value
+            // tags: $("#tags").val()
+        }
+        console.log(info)
+        $.ajax({
+            type: "POST",
+            url: `/gongstagram/post`,
+            contentType: "application/json",
+            data: JSON.stringify(info),
+            success: function (response) { // 성공하면
+                alert("작성 완료!")
+                window.location.href = `gongstagram_main.html`
+            }
+        });
+    }
+</script>
+<body>
+<header class="header">
+    <div class="container">
+        <a href="home.html" class="logo"><img src="img/logo_text.png" alt=""></a>
+        <nav class="navi">
+            <ul class="navi-list">
+                <li class="navi-item"><a href="gongstagram_main.html"><i class="fas fa-home"></i></a></li>
+                <li class="navi-item"><a href="explor.html"><i class="far fa-compass"></i></a></li>
+                <li class="navi-item"><a href="profile.html"><i class="far fa-user"></i></a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+    <main>
+        <section class="upload">
+            <div class="upload-top">
+                <a href="home.html" class="">
+                    <img src="img/logo_text.png" alt="">
+                </a>
+            </div>
+            <div class="upload-form">
+                <input type="file" name="file" id="imageFileOpenInput" accept="image/*">
+                <div class="upload-img">
+                    <img src="/img/profile.jpeg" alt="">
+                </div>
+                <div class="upload-form-detail">
+
+                    <input type="text" name="content" id="content" placeholder="업로드 할 글을 작성해주세요">
+                    <input type="text" maxlength="500" value="" id="tags" data-role="tagsinput" placeholder="TAGS" >
+                    <button class="cta blue" onclick="upload_post()">업로드</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <div class="container">
+        <ul>
+            <li><a href="#a">소개</a></li>
+            <li><a href="#a">블로그</a></li>
+            <li><a href="#a">채용 정보</a></li>
+            <li><a href="#a">도움말</a></li>
+            <li><a href="#a">API</a></li>
+            <li><a href="#a">개인정보처리방침</a></li>
+            <li><a href="#a">약관</a></li>
+            <li><a href="#a">인기 계정</a></li>
+            <li><a href="#a">해시태그</a></li>
+            <li><a href="#a">위치</a></li>
+        </ul>
+        <div class="copy">
+            <p>© 2020 Photogram from There Programing</p>
+        </div>
+    </div>
+</footer>
+</body>
+
+</html>
