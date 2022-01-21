@@ -239,7 +239,9 @@ svg {
     stroke-linecap: round;
     animation: loading 4500ms ease-in-out infinite alternate;
 }
-
+.modal-backdrop{
+    z-index : 10;
+}
 @media screen and (max-width: 935px) {
     .main .container {
         width: 100%;

@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photogram</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <!-- Style -->
+
+
     <link rel="stylesheet" href="css/gongstagram_feed.css">
     <!-- Fontawesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
@@ -15,6 +18,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
             integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
             crossorigin="anonymous"></script>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <script src="js/bootstrap.min.js"></script>
+
 </head>
 
 <body>
@@ -30,6 +41,8 @@
         </nav>
     </div>
 </header>
+
+
 <script>
     $(document).ready(function () {
         all_posts();
@@ -62,7 +75,7 @@
                                                         </div>
                                                         <div>사용자</div>
                                                         <div style="float: right">
-                                                            <button type="button" onclick="open_modal(id)">수정</button>
+                                                            <button type="button" onclick="open_modal(${id})">수정</button>
                                                             <button type="button" onclick="delete_post(${id})">삭제</button>
                                                         </div>
                                                     </div>
@@ -98,20 +111,53 @@
             type: "DELETE",
             url: `/gongstagram/post/${id}`,
             success: function (response) {
+                alert("삭제완료!");
                 window.location.reload();
             }
         });
     }
-    function open_modal(){
-        $('#exampleModal').show();
-    }
-    function update_post(id) {
 
-        let update_content = $('#modal-content').val();
+    function open_modal(id){
+        $('#modal-edit').modal("show");
+        get_post(id);
+
+    }
+    function get_post(id){
+        $.ajax({
+            type: "GET",
+            url: `/gongstagram/post/${id}`,
+            data: {},
+            success: function (response){
+
+                let content = response['content'];
+
+                $("#modal-content").val(content);
+
+                $("#modal-save").attr("onclick", `update_post('${id}');`);
+                // let total_tag_value = "";
+                // console.log(tags);
+                // for(let i = 0; i < tags.length; i++){
+                //     let tag_value = " #"+tags[i]["name"];
+                //     console.log(tag_value)
+                //     total_tag_value += tag_value;
+                // }
+                // $("#org_tags").text(total_tag_value);
+
+            }
+        });
+    }
+
+    function update_post(id) {
+        let info = {
+
+            content : $('textarea#modal-content').val(),
+            //tags: $("input#tags").val()
+        }
         $.ajax({
             type: "PUT",
             url: `/gongstagram/post/${id}`,
-            data: {content:update_content},
+            contentType: "application/json",
+            data:  JSON.stringify(info),
             success: function (response) {
                 alert("수정 완료!");
                 window.location.reload();
@@ -194,14 +240,15 @@
         </article>
     </section>
 </main>
-<div class="modal-container">
-    <div class="modal">
-        <button>신고</button>
-        <button>팔로우 취소</button>
-        <button id="cancel" onclick="closePopup()">취소</button>
-    </div>
-</div>
-<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<!--<div class="modal-container">-->
+<!--    <div class="modal">-->
+<!--        <button>신고</button>-->
+<!--        <button>팔로우 취소</button>-->
+<!--        <button id="cancel" onclick="closePopup()">취소</button>-->
+<!--    </div>-->
+<!--</div>-->
+<!-- Edit Modal -->
+<div class="modal" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -214,25 +261,24 @@
             <div class="modal-body">
                 <form name="form" id="form" role="form" method="post">
 
-                    <div class="mb-3">
+                    <div class="mb-6">
                         <label for="modal-content">내용</label>
                         <textarea class="form-control" rows="5" name="content" id="modal-content"
                                   placeholder="내용을 입력해 주세요"></textarea>
                     </div>
-<!--                    <div class="mb-3">-->
-<!--                        <label for="tags">Tag</label>-->
-<!--                        <input type="text" class="form-control" id="tags" data-role="tagsinput" placeholder="TAGS" >-->
-<!--                    </div>-->
+                    <div class="mb-6">
+                        <label for="tags">Tag : </label><span id="org_tags"></span>
+                        <input type="text" class="form-control" id="tags" data-role="tagsinput" placeholder="TAGS" >
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <input type="submit" class="btn btn-secondary" id="modal-save" onclick="update_post()"
+                <input type="submit" class="btn btn-secondary" id="modal-save" onclick=""
                        value="Save changes"></button>
             </div>
         </div>
     </div>
 </div>
-
 </body>
 </html>
