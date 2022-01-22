@@ -6,6 +6,7 @@ import com.warrior.ddamddam.gongstagram.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -18,8 +19,8 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
     @PostMapping("/gongstagram/post")
-    public Post createPost(@RequestBody PostDto postDto) throws SQLException {
-        Post post = postService.createPost(postDto);
+    public Post createPost(@RequestParam("content") String content,@RequestParam("file") MultipartFile imagefile) throws SQLException {
+        Post post = postService.createPost(content,imagefile);
         return post;
     }
 
