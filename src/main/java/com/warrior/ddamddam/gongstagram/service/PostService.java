@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,11 +18,14 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostRepository postRepository;
-
-    public Post createPost(PostDto postDto) throws SQLException {
+    private final FileService fileService;
+    public Post createPost(String content, MultipartFile imageFile) throws SQLException {
         //User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such user"));
 
-        Post post = new Post(postDto);
+        Post post = new Post();
+        post.setContent(content);
+        post.setImage(imageFile.getOriginalFilename());
+        post.setImage_real(fileService.uploadImage(imageFile));
         postRepository.save(post);
 
 //        if(!(tilRequestDto.getTags().isEmpty())) {
