@@ -22,6 +22,10 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String content;
 
+    private String image;
+
+    private String image_real;
+
     @Builder
     public Post(PostDto postDto) {
         this.content = postDto.getContent();
