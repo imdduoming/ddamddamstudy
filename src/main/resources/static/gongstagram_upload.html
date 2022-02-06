@@ -18,42 +18,44 @@
 
 </head>
 <script>
-    // function imageChoose(obj) {
-    //     let f = obj.files[0];
-    //
-    //     if (!f.type.match("image.*")) {
-    //         alert("이미지를 등록해야 합니다.");
-    //         return;
-    //     }
-    //
-    //     let reader = new FileReader();
-    //     reader.onload = (e) => {
-    //         $("#imageUploadPreview").attr("src", e.target.result);
-    //     }
-    //     reader.readAsDataURL(f); // 이 코드 실행시 reader.onload 실행됨.
-    // }
+    $(function() {
+        $("#input-pic").on('change', function(){
+            readURL(this);
+        });
+    });
     function upload_post(){
-        let info = {
-            content : document.getElementById("content").value
-            // tags: $("#tags").val()
-        }
+        let info = new FormData();
+        info.append("content",document.getElementById("content").value);
+        info.append("file",$('#input-pic')[0].files[0])
+
         console.log(info)
         $.ajax({
             type: "POST",
             url: `/gongstagram/post`,
-            contentType: "application/json",
-            data: JSON.stringify(info),
+            contentType: false,
+            processData: false,
+            data: info,
             success: function (response) { // 성공하면
                 alert("작성 완료!")
                 window.location.href = `gongstagram_main.html`
             }
-        });
+        })
+    }
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#result-image').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 </script>
 <body>
 <header class="header">
     <div class="container">
-        <a href="home.html" class="logo"><img src="img/logo_text.png" alt=""></a>
+        <a href="gongstagram_main.html" class="logo"><img src="img/logo_text.png" alt=""></a>
         <nav class="navi">
             <ul class="navi-list">
                 <li class="navi-item"><a href="gongstagram_main.html"><i class="fas fa-home"></i></a></li>
@@ -68,14 +70,14 @@
     <main>
         <section class="upload">
             <div class="upload-top">
-                <a href="home.html" class="">
-                    <img src="img/logo_text.png" alt="">
-                </a>
+
             </div>
             <div class="upload-form">
-                <input type="file" name="file" id="imageFileOpenInput" accept="image/*">
+                <p><strong>업로드된이미지</strong></p>
+                <input type="file" name="file" id="input-pic" accept="image/*">
                 <div class="upload-img">
-                    <img src="/img/profile.jpeg" alt="">
+
+                    <img src="" id="result-image">
                 </div>
                 <div class="upload-form-detail">
 
