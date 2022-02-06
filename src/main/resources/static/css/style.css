@@ -1,0 +1,10 @@
+/* 중복아이디 존재하지 않는 경우 */
+.login-id-re-1{
+    color : green;
+    display : none;
+}
+/* 중복아이디 존재하는 경우 */
+.login-id-re-2{
+    color : red;
+    display : none;
+}
