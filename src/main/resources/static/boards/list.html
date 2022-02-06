@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 목록</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<script>
+
+    $(document).ready(function () {
+        show_list();
+    });
+
+
+    function move_write () {
+        location.href = "write.html"
+        }
+
+
+
+    function show_list(){
+        $.ajax({
+            type : "GET",
+            url : "/api/boards/list",
+            dataType : "JSON",
+            success : function(response) {
+                console.log(response)
+                let posts = response;
+                for(let i = 0; i<posts.length; i++){
+                    let post = posts[i];
+                    let id = post['id'];
+                    let title = post['title'];
+                    let writer = post['writer'];
+                    let createdDate = post['createdDate'];
+                    let count = post['count'];
+                    let temp_html = `<tr>
+                                    <td>${id}</td>
+                                    <td><a  onclick="move_detail(${id})">${title}</a></td>
+                                    <td>${writer}</td>
+                                    <td>${createdDate}</td>
+                                    <td>${count}</td>
+                                    </tr>`;
+
+                    $('.board-list').append(temp_html);
+                }
+            },
+            error : function() {
+                alert('error');
+            }
+        });
+    }
+
+
+    function move_detail(id){
+        location.href = `/boards/detail.html?id=` + id;
+    }
+
+</script>
+<body>
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="col-lg-8"><!--게시판 넓이 -->
+            <div class="col-lg-12">
+                <h1 class="page-header">게시글 리스트</h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <button type="button" class="btn btn-outline btn-primary pull-right"  onclick="move_write()">
+                        <i class="fa fa-edit fa-fw"></i> 작성하기
+                    </button>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">글 목록 </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>No.1</th>
+                            <th>제목</th>
+                            <th>작성자</th>
+                            <th>작성일</th>
+                            <th>조회수</th>
+                        </tr>
+                        </thead>
+                        <tbody class = "board-list">
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>상세 페이지</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<script>
+    // let index = {
+    //   init: function () {
+    //     $("#btn-save").on("click", () => {
+    //       this.save();
+    //     });
+    //   },
+
+
+    let id;
+
+    $(document).ready(function () {
+        id = window.location.search.split("=")[1]
+        console.log(id);
+        modify(id);
+    });
+
+
+    function modify(id){
+
+        $.ajax({
+            type : "GET",
+            url : `/api/boards/${id}`,
+            dataType : "JSON",
+            contentType: "application/json; charset=utf-8",
+            success : function(response) {
+                console.log(response)
+                let title = response['title'];
+                let writer = response['writer'];
+                let content = response['content'];
+                let temp_html = `<h1 class="h3 m-3 fw-normal">제목</h1>
+                <div class="form-floating m-3">
+                    <input type="text" class="form-control" id="title" value = "${title}">
+                    <label for="title">작성자</label>
+                    <label for="writer"></label>
+                    <input type="text" readonly = "readonly" class="form-control" id="writer" value = "${writer}">
+                </div>
+                <div class="form-floating m-3">
+                    <label for="content">내용</label>
+                    <textarea class="form-control" rows="5" id="content" style="height: 450px;" >${content}</textarea>
+                </div>`
+                $('.board-detail').append(temp_html);
+                $("#btn-update").on("click",function() { update_post(id)});
+                $("#btn-cancle").on("click",function() { move_detail(id) });
+            },
+            error : function() {
+                alert('error');
+            }
+        });
+    }
+
+    function move_detail(id){
+        location.href = `/boards/detail.html?id=` + id;
+    }
+
+
+    function update_post(id){
+        let data = {
+            title: $("#title").val(),
+            content: $("#content").val(),
+            writer: $("#writer").val()
+            //tags: $("input#tags").val()
+        }
+        $.ajax({
+            type: "PUT",
+            url: `/api/boards/${id}`,
+            contentType: "application/json; charset=utf-8",
+            data:  JSON.stringify(data),
+            success: function (response) {
+                alert("수정 완료!");
+                window.location.reload();
+                move_detail(id);
+            }
+        });
+    }
+
+</script>
+
+<body>
+<div class="container">
+    <h2>상세 페이지</h2>
+    <main class="form-signin" style="max-width: 100%;">
+        <div class="container border rounded flex-md-row mb-4 shadow-sm h-md-250">
+            <form class = "board-detail">
+
+            </form>
+
+            <button class="w-100 btn btn-lg btn-success" id="btn-cancle">수정취소</button>
+            <button class="w-100 btn btn-lg btn-success" id="btn-update">저장하기</button>
+        </div>
+    </main>
+</div>
+</body>
+</html>
+
