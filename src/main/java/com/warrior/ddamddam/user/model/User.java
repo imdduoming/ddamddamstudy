@@ -1,6 +1,5 @@
 package com.warrior.ddamddam.user.model;
 
-import com.warrior.ddamddam.gongstagram.domain.Timestamped;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,36 +14,13 @@ import java.time.LocalDateTime;
 @Entity // DB 테이블
 public class User extends Timestamped {
 
-    public User(String username, String password, String email, UserRole role) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.role = role;
-    }
-
-    public User(String username, String password, String email, UserRole role, Long apiId) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.role = role;
-        this.apiId = apiId;
-    }
-
-//    public User(String username, String password, String email, UserRole role, Long naverId) {
-//        this.username = username;
-//        this.password = password;
-//        this.email = email;
-//        this.role = role;
-//        this.naverId = naverId;
-//    }
-
     // ID값 (Primary Key) 자동 생성&증가
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
 
     @NotNull
-    @Column(length = 10, unique = true)
+    @Column(unique = true)
     private String username;
 
     @NotNull
@@ -60,6 +36,9 @@ public class User extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
 
+//    @Column(unique = true)
+//    private String nickname;
+
     @Column
     private LocalDateTime signupDate;
 
@@ -73,5 +52,30 @@ public class User extends Timestamped {
 
 //    @Column(nullable = true)
 //    private Long naverId;
+
+    public User(String username, String password, String email, UserRole role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+//        this.nickname=nickname;
+    }
+
+    // 소셜 로그인 (네이버, 카카오)
+    public User(String username, String password, String email, UserRole role, Long apiId) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.apiId = apiId;
+    }
+
+//    public User(String username, String password, String email, UserRole role, Long naverId) {
+//        this.username = username;
+//        this.password = password;
+//        this.email = email;
+//        this.role = role;
+//        this.naverId = naverId;
+//    }
 }
 

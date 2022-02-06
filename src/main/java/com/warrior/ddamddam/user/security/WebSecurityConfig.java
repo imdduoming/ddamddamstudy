@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
 
-// 그 외 모든 요청은 인증과정 필요
+                // 그 외 모든 요청은 인증과정 필요
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -46,7 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutUrl("/user/logout")
                 .invalidateHttpSession(true)    // 로그아웃시 인증정보 지우고 세션 무효화
-                .permitAll();
-
+                .permitAll()
+                .and()
+                .exceptionHandling()
+                .accessDeniedPage("/user/forbidden");
     }
 }
