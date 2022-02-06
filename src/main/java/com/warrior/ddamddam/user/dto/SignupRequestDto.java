@@ -2,6 +2,7 @@ package com.warrior.ddamddam.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+
 @Setter
 @Getter
 public class SignupRequestDto {
@@ -10,4 +11,5 @@ public class SignupRequestDto {
     private String email;
     private boolean admin = false;
     private String adminToken = "";
+//    private String nickname;
 }

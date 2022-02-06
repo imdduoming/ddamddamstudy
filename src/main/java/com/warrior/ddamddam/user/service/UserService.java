@@ -9,6 +9,7 @@ import com.warrior.ddamddam.user.security.kakao.KakaoOAuth2;
 import com.warrior.ddamddam.user.security.kakao.KakaoUserInfo;
 import com.warrior.ddamddam.user.security.naver.NaverOAuth2;
 import com.warrior.ddamddam.user.security.naver.NaverUserInfo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -56,8 +58,21 @@ public class UserService {
             role = UserRole.ADMIN;
         }
 
+//        String nickname=requestDto.getNickname();
+
+//        User user = new User(username, password, email, role, nickname);
         User user = new User(username, password, email, role);
         userRepository.save(user);
+    }
+
+    //회원 중복 확인
+    @Transactional(readOnly = true)
+    public boolean userIdChk(String userId) {
+//        System.out.println(userId);
+//        System.out.println(userRepository.findByUsername(userId));
+        if(userRepository.existsByUsername(userId))
+            return false;
+        return true;
     }
 
     public void kakaoLogin(String authorizedCode) {
@@ -145,4 +160,5 @@ public class UserService {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+
 }
