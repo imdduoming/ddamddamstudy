@@ -1,22 +1,24 @@
 package com.warrior.ddamddam.user.security;
 
 import com.warrior.ddamddam.user.model.User;
+import com.warrior.ddamddam.user.model.UserRole;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
+    private static final String ROLE_PREFIX = "ROLE_";
 
     public UserDetailsImpl(User user) {
-
         this.user = user;
     }
 
     public User getUser() {
-
         return user;
     }
 
@@ -52,7 +54,13 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        UserRole userRole = user.getRole();
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(ROLE_PREFIX + userRole.toString());
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(authority);
+
+        return authorities;
     }
 }
 

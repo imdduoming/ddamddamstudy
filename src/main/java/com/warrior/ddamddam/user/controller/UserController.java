@@ -1,25 +1,30 @@
 package com.warrior.ddamddam.user.controller;
 
 import com.warrior.ddamddam.user.dto.SignupRequestDto;
+import com.warrior.ddamddam.user.model.User;
 import com.warrior.ddamddam.user.service.UserService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
+@Slf4j
 @Controller
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
-
-        this.userService = userService;
-    }
+//    @Autowired
+//    public UserController(UserService userService) {
+//
+//        this.userService = userService;
+//    }
 
     // 회원 로그인 페이지
     @GetMapping("/user/login")
@@ -32,6 +37,20 @@ public class UserController {
     public String loginError(Model model) {
         model.addAttribute("loginError", true);
         return "login";
+    }
+
+    // 아이디 중복 검사
+    @PostMapping("/user/userIdChk")
+    @ResponseBody
+    public String userIdChk(@RequestBody String id) {
+        boolean result = userService.userIdChk(id);
+
+        if(result==false) {
+            return "fail";	// 중복 아이디가 존재
+
+        } else {
+            return "success";	// 중복 아이디 x
+        }
     }
 
     // 로그아웃
@@ -50,7 +69,7 @@ public class UserController {
 
     @GetMapping("/user/naver/callback")
     public String naverLogin(String code) {
-// authorizedCode: 카카오 서버로부터 받은 인가 코드
+        // authorizedCode: 네이버 서버로부터 받은 인가 코드
         userService.naverLogin(code);
         return "redirect:/";
     }
@@ -59,7 +78,7 @@ public class UserController {
     @GetMapping("/user/signup")
     public String signup() {
 
-        return "signup";
+        return "signup.html";
     }
 
     // 회원 가입 요청 처리
@@ -68,4 +87,15 @@ public class UserController {
         userService.registerUser(requestDto);
         return "redirect:/user/login";
     }
+
+    // 일반 user 접근불가 페이지
+    @GetMapping("/user/forbidden")
+    public String forbidden() {
+        return "forbidden";
+    }
+
+//    @GetMapping("/mypage")
+//    public String mypage(){
+//        return username;
+//    }
 }
