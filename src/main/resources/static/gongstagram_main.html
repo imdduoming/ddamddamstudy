@@ -22,6 +22,11 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" rel="stylesheet">
+
+
+
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/bootstrap.css" />
     <script src="js/bootstrap.min.js"></script>
@@ -64,6 +69,7 @@
                     let id=post['id'];
                     let content = post['content'];
                     let image_real=post['image_real']
+                    let num_comment=post['num_comment']
 
                     let temp_html = `<div class="story-list__item">
                                                     <div class="sl__item__header">
@@ -76,6 +82,7 @@
                                                         <div>사용자</div>
                                                         <div style="float: right">
                                                             <button type="button" onclick="open_modal(${id})">수정</button>
+
                                                             <button type="button" onclick="delete_post(${id})">삭제</button>
                                                         </div>
                                                     </div>
@@ -90,9 +97,10 @@
                                                             <p>${content}</p>
                                                         </div>
                                                         <div class="sl__item__input">
-                                                            <input type="text" placeholder="댓글 달기...">
-                                                            <button>게시</button>
+                                                            <input type="text" id="comment" placeholder="댓글 달기">
+                                                            <button onclick="create_comment(${id})">게시</button>
                                                         </div>
+                                                        <a href="#" onclick="open_detail_modal(${id})">댓글 ${num_comment} 개 더보기</a>
                                                     </div>
                                                 </div>`;
                     $('.story-list').append(temp_html);
@@ -131,6 +139,7 @@
 
                 let content = response['content'];
 
+
                 $("#modal-content").val(content);
 
                 $("#modal-save").attr("onclick", `update_post('${id}');`);
@@ -146,6 +155,7 @@
             }
         });
     }
+
 
     function update_post(id) {
         let info = {
@@ -165,7 +175,101 @@
         });
     }
 
+    function create_comment(id) {
+        let info = {
+            content: $("#comment").val(),
+            idx: id
+        }
+        console.log(info);
+        $.ajax({
+            type: "POST",
+            url: `/post/comment`,
+            contentType: "application/json",
+            data: JSON.stringify(info),
 
+            success: function (response) {
+                alert("댓글 작성이 완료되었습니다!")
+                window.location.reload()
+            }
+        })
+    }
+
+    function open_detail_modal(id){
+        // detail 모달 창 열기
+        $('#modal-post').modal("show");
+        get_detail(id)
+        get_comment(id)
+    }
+
+    function get_detail(id){
+        $.ajax({
+            type: "GET",
+            url: `/gongstagram/post/${id}`,
+            data: {},
+            success: function (response){
+                console.log(response)
+                let content = response['content']; //내용
+                let img_real =response['image_real']// 사진
+                $("#detail-cotent").text(content);
+                $("#detail-image").attr("src",img_real);
+
+                // let total_tag_value = "";
+                // console.log(tags);
+                // for(let i = 0; i < tags.length; i++){
+                //     let tag_value = " #"+tags[i]["name"];
+                //     console.log(tag_value)
+                //     total_tag_value += tag_value;
+                // }
+                // $("#org_tags").text(total_tag_value);
+
+            }
+        });
+    }
+
+    function get_comment(id){
+        $.ajax({
+            type: "GET",
+            url: `/post/comments/${id}`,
+            data: {},
+            success: function (response){
+                console.log(response)
+                let temp_html=``;
+                for (let i = 0; i < response.length; i++) {
+
+                    let comment = response[i];
+
+                    let id=comment['id'];
+                    let content = comment['post_comment'];
+
+                    temp_html+=`<li>${content}<button type="button" style="float: right" onclick="delete_comment(${id})">삭제</button></li><hr/>`
+                }
+
+                $("#detail-comment").append(temp_html)
+
+
+                // let total_tag_value = "";
+                // console.log(tags);
+                // for(let i = 0; i < tags.length; i++){
+                //     let tag_value = " #"+tags[i]["name"];
+                //     console.log(tag_value)
+                //     total_tag_value += tag_value;
+                // }
+                // $("#org_tags").text(total_tag_value);
+
+            }
+        });
+    }
+
+    function delete_comment(id) {
+        $.ajax({
+            type: "DELETE",
+            url: `/post/comments/${id}`,
+            success: function (response) {
+                alert("삭제완료!");
+                window.location.reload();
+            }
+        });
+    }
 
     function likeOrUnLike(imageId) {
         let likeIcon = $("#like_icon_"+imageId);
@@ -280,5 +384,41 @@
         </div>
     </div>
 </div>
+
+<!--post detail 모달창-->
+<div class="modal" id="modal-post" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-post-detail">사용자</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                    <div class="mb-6">
+                        <img id="detail-image" src="" >
+                    </div>
+                    <div class="mb-3" id="detail-cotent" style="font-size: large; font-weight: bold ">
+
+                    </div>
+                    <hr>
+                    <div class="mb-3" id="detail-comment">
+
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--post detail 모달창 끝 -->
+
 </body>
 </html>
