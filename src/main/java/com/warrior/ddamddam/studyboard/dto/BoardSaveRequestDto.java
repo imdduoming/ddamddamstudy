@@ -1,7 +1,6 @@
 package com.warrior.ddamddam.studyboard.dto;
 
 import com.warrior.ddamddam.studyboard.domain.Board;
-import com.warrior.ddamddam.studyboard.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
